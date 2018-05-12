@@ -1,0 +1,12 @@
+FROM golang:1.9.4
+
+WORKDIR /go/src/gcd-labs/server
+COPY server .
+COPY proto ../proto
+
+RUN go get -v ./...
+RUN go install -v ./...
+
+EXPOSE 3000
+
+CMD ["server"]
