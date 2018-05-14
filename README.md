@@ -7,21 +7,28 @@
 - Install [Protocol Buffers](https://github.com/google/protobuf)
 
 ## Run Minikube
-```
+```s
 $ minikube start [--vm-driver=<driver>]
 $ kubectl cluster-info
 ```
 
 ## To speed up the development, set docker to reuse Docker daemon running inside the Minikube virtual machine.
-```
+```s
+$ docker-machine create -d virtualbox minikube
+$ docker-machine env minikube
 $ eval $(minikube docker-env)
+```
+
+## delete machine
+```s
+$ docker-machine rm minikube
 ```
 
 ## Defining communication protocol
 Create `gcd.proto` file inside `proto` directory
 
 ### Navigate to the pb directory and run the following command.
-```
+```s
 $ protoc -I . --go_out=plugins=grpc:. ./*.proto
 ```
 Compilation should produce `gcd.proto.go` file.
@@ -163,22 +170,22 @@ $ docker build -t local/api -f Dockerfile.api .
 ### Run a Docker Image as a Container
 
 To list the docker images
-```
+```s
 $ docker images
 ```
 
 If your application wants to run in 3000 port
-```
+```s
 $ docker run -d --restart=always -p port:port image_name:version
 ```
 
 Run `server` the following commands.
-```
+```s
 $ docker run -d --restart=always -p 3000:3000 local/server:latest
 ```
 
 Run `client` the following commands.
-```
+```s
 $ docker run -d --restart=always -p 4000:3000 local/api:latest
 ```
 
@@ -259,35 +266,35 @@ spec:
     targetPort: api-service
 ```
 To create these resources inside the cluster, run the following commands.
-```
+```s
 $ kubectl create -f api.yaml
 $ kubectl create -f gcd.yaml
 ```
 
 Check if all pods are running. By specifying -w flag, you can watch for changes.
-```
+```s
 $ kubectl get pods -w
 NAME                             READY     STATUS    RESTARTS   AGE
 api-deployment-778049682-3vd0z   1/1       Running   0          3s
 ```
 
 Get the URL of the API service.
-```
+```s
 $ minikube service api-service --url
 ```
 
 Finally, try it out.
-```
+```s
 $ curl http://192.168.99.100:32602/gcd/294/462
 ```
 
 Build images and deploy to Kubernetes cluster:
-```
+```s
 $ ./build.sh
 ```
 
 Try it out.
-```
+```s
 $ curl $(minikube service api-service --url)/gcd/294/462
 ```
 
